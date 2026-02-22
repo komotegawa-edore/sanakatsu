@@ -8,6 +8,15 @@ interface MessageBubbleProps {
   content: string;
 }
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/^[-*]\s+/gm, "")
+    .replace(/^\d+\.\s+/gm, "");
+}
+
 export function MessageBubble({ role, content }: MessageBubbleProps) {
   return (
     <div
@@ -22,7 +31,7 @@ export function MessageBubble({ role, content }: MessageBubbleProps) {
           alt=""
           width={28}
           height={28}
-          className="mt-1 flex-shrink-0 rounded-full"
+          className="mt-1 h-7 w-7 flex-shrink-0 self-start rounded-full"
         />
       )}
       <div
@@ -30,10 +39,12 @@ export function MessageBubble({ role, content }: MessageBubbleProps) {
           "max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
           role === "user"
             ? "bg-rose-600 text-white"
-            : "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+            : "bg-gray-100 text-gray-900"
         )}
       >
-        <div className="whitespace-pre-wrap break-words">{content}</div>
+        <div className="whitespace-pre-wrap break-words">
+          {role === "assistant" ? stripMarkdown(content) : content}
+        </div>
       </div>
     </div>
   );
