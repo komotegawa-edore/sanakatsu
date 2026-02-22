@@ -60,14 +60,18 @@ export default function Home() {
               href="/chat"
               className="group rounded-2xl border border-gray-100 bg-white p-6 transition-all hover:border-rose-200 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-rose-800"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-100 text-2xl dark:bg-rose-900/30">
-                💬
-              </div>
+              <Image
+                src="/sanae.png"
+                alt=""
+                width={48}
+                height={48}
+                className="rounded-xl"
+              />
               <h3 className="mt-4 font-semibold text-gray-900 group-hover:text-rose-600 dark:text-white dark:group-hover:text-rose-400">
                 AIチャット
               </h3>
               <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                高市早苗に関する質問にAIが出典付きで回答。RAG技術でニュース記事に基づいた正確な情報を提供します。
+                高市早苗に関する質問にAIが出典付きで回答。ニュース記事に基づいた正確な情報を提供します。
               </p>
             </Link>
 
@@ -76,8 +80,14 @@ export default function Home() {
               href="/news"
               className="group rounded-2xl border border-gray-100 bg-white p-6 transition-all hover:border-rose-200 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-rose-800"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-2xl dark:bg-blue-900/30">
-                📰
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/30">
+                <Image
+                  src="/sanae.png"
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="rounded-lg opacity-80"
+                />
               </div>
               <h3 className="mt-4 font-semibold text-gray-900 group-hover:text-rose-600 dark:text-white dark:group-hover:text-rose-400">
                 ニュース一覧
@@ -92,8 +102,14 @@ export default function Home() {
               href="/topics"
               className="group rounded-2xl border border-gray-100 bg-white p-6 transition-all hover:border-rose-200 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-rose-800"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-2xl dark:bg-amber-900/30">
-                📋
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-900/30">
+                <Image
+                  src="/sanae.png"
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="rounded-lg opacity-80"
+                />
               </div>
               <h3 className="mt-4 font-semibold text-gray-900 group-hover:text-rose-600 dark:text-white dark:group-hover:text-rose-400">
                 トピック要約
@@ -123,7 +139,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="hidden text-gray-300 sm:block dark:text-gray-600">→</div>
+            <div className="hidden text-gray-300 sm:block dark:text-gray-600">&rarr;</div>
 
             <div className="flex flex-col items-center gap-2 text-center">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-600 text-sm font-bold text-white">
@@ -135,7 +151,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="hidden text-gray-300 sm:block dark:text-gray-600">→</div>
+            <div className="hidden text-gray-300 sm:block dark:text-gray-600">&rarr;</div>
 
             <div className="flex flex-col items-center gap-2 text-center">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-600 text-sm font-bold text-white">
@@ -153,7 +169,14 @@ export default function Home() {
       {/* CTA */}
       <section className="border-t border-gray-100 bg-white py-12 dark:border-gray-800 dark:bg-gray-900">
         <div className="mx-auto max-w-5xl px-4 text-center">
-          <p className="text-lg font-bold text-gray-900 dark:text-white">
+          <Image
+            src="/sanae.png"
+            alt=""
+            width={56}
+            height={56}
+            className="mx-auto rounded-full"
+          />
+          <p className="mt-3 text-lg font-bold text-gray-900 dark:text-white">
             さっそく試してみましょう
           </p>
           <Link

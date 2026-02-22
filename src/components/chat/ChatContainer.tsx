@@ -2,6 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
+import Image from "next/image";
 import { useRef, useEffect, useMemo } from "react";
 import { MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
@@ -33,6 +34,13 @@ export function ChatContainer() {
       <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto p-4">
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-6 text-center">
+            <Image
+              src="/sanae.png"
+              alt="サナ活"
+              width={96}
+              height={96}
+              className="rounded-full opacity-90"
+            />
             <div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                 サナ活 AI チャット
