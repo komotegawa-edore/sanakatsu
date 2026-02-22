@@ -36,6 +36,16 @@ export const articles = pgTable(
   ]
 );
 
+export const chatLogs = pgTable(
+  "chat_logs",
+  {
+    id: serial("id").primaryKey(),
+    question: text("question").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("chat_logs_created_idx").on(table.createdAt)]
+);
+
 export const embeddings = pgTable(
   "embeddings",
   {

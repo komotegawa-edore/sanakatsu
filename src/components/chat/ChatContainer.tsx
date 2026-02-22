@@ -36,13 +36,27 @@ export function ChatContainer() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, status]);
 
   const handleSend = (content: string) => {
     if (rateLimited) return;
     setErrorMessage(null);
     sendMessage({ text: content });
   };
+
+  // Find the first user message for follow-up context
+  const firstUserMessage = messages.find((m) => m.role === "user");
+  const firstUserText = firstUserMessage?.parts
+    ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map((p) => p.text)
+    .join("");
+
+  // Show follow-ups when AI has finished responding
+  const lastMessage = messages[messages.length - 1];
+  const showFollowUp =
+    messages.length > 0 &&
+    lastMessage?.role === "assistant" &&
+    status === "ready";
 
   return (
     <div className="flex h-full flex-col">
@@ -57,7 +71,7 @@ export function ChatContainer() {
               className="rounded-full opacity-90"
             />
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-bold text-gray-900">
                 サナ活 AI チャット
               </h2>
               <p className="mt-2 text-sm text-gray-500">
@@ -67,39 +81,49 @@ export function ChatContainer() {
             <SuggestedQuestions onSelect={handleSend} />
           </div>
         ) : (
-          messages.map((m) => (
-            <MessageBubble
-              key={m.id}
-              role={m.role as "user" | "assistant"}
-              content={
-                m.parts
-                  ?.filter(
-                    (p): p is { type: "text"; text: string } =>
-                      p.type === "text"
-                  )
-                  .map((p) => p.text)
-                  .join("") ?? ""
-              }
-            />
-          ))
+          <>
+            {messages.map((m) => (
+              <MessageBubble
+                key={m.id}
+                role={m.role as "user" | "assistant"}
+                content={
+                  m.parts
+                    ?.filter(
+                      (p): p is { type: "text"; text: string } =>
+                        p.type === "text"
+                    )
+                    .map((p) => p.text)
+                    .join("") ?? ""
+                }
+              />
+            ))}
+          </>
         )}
         {status === "submitted" && (
           <div className="flex justify-start">
-            <div className="rounded-2xl bg-gray-100 px-4 py-3 text-sm text-gray-500 dark:bg-gray-800">
+            <div className="rounded-2xl bg-gray-100 px-4 py-3 text-sm text-gray-500">
               <span className="animate-pulse">回答を生成中...</span>
             </div>
           </div>
         )}
         {errorMessage && (
           <div className="flex justify-center">
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {errorMessage}
             </div>
           </div>
         )}
+        {showFollowUp && !rateLimited && (
+          <div className="pt-2">
+            <SuggestedQuestions
+              onSelect={handleSend}
+              lastUserMessage={firstUserText}
+            />
+          </div>
+        )}
       </div>
 
-      <div className="border-t border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+      <div className="border-t border-gray-200 bg-white p-4">
         <ChatInput onSubmit={handleSend} isLoading={isLoading || rateLimited} />
         {rateLimited && (
           <p className="mt-2 text-center text-xs text-gray-400">

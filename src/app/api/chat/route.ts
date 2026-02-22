@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { searchSimilar } from "@/lib/ai/similarity";
 import { buildSystemPrompt } from "@/lib/ai/chat";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getDb } from "@/lib/db";
+import { chatLogs } from "@/lib/db/schema";
 
 export const maxDuration = 30;
 
@@ -55,6 +57,14 @@ export async function POST(req: Request) {
   const lastUserMessage = [...messages]
     .reverse()
     .find((m: { role: string }) => m.role === "user");
+
+  // Log user question to DB (non-blocking)
+  if (lastUserMessage) {
+    getDb()
+      .insert(chatLogs)
+      .values({ question: lastUserMessage.content })
+      .catch(() => {});
+  }
 
   // Search for relevant articles
   let context: Awaited<ReturnType<typeof searchSimilar>> = [];
