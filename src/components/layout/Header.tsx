@@ -19,7 +19,7 @@ export function Header() {
           />
           <span className="text-lg font-bold text-rose-600">サナ活</span>
           <span className="hidden text-xs text-gray-400 sm:inline">
-            非公式ニュースQ&A
+            政治をもっと身近に
           </span>
         </Link>
         <Navigation className="hidden md:flex" />
