@@ -10,11 +10,13 @@ interface MessageBubbleProps {
 
 function stripMarkdown(text: string): string {
   return text
+    .replace(/---FOLLOWUP[\s\S]*$/, "")
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/\*\*(.+?)\*\*/g, "$1")
     .replace(/\*(.+?)\*/g, "$1")
     .replace(/^[-*]\s+/gm, "")
-    .replace(/^\d+\.\s+/gm, "");
+    .replace(/^\d+\.\s+/gm, "")
+    .trim();
 }
 
 export function MessageBubble({ role, content }: MessageBubbleProps) {

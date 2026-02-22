@@ -44,15 +44,26 @@ export function ChatContainer() {
     sendMessage({ text: content });
   };
 
-  // Find the first user message for follow-up context
-  const firstUserMessage = messages.find((m) => m.role === "user");
-  const firstUserText = firstUserMessage?.parts
-    ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-    .map((p) => p.text)
-    .join("");
+  // Parse follow-up questions from the last assistant message
+  const lastMessage = messages[messages.length - 1];
+  const lastAssistantText =
+    lastMessage?.role === "assistant"
+      ? lastMessage.parts
+          ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
+          .map((p) => p.text)
+          .join("") ?? ""
+      : "";
+
+  const followUpQuestions = useMemo(() => {
+    const match = lastAssistantText.match(/---FOLLOWUP\s*([\s\S]*)/);
+    if (!match) return undefined;
+    return match[1]
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
+  }, [lastAssistantText]);
 
   // Show follow-ups when AI has finished responding
-  const lastMessage = messages[messages.length - 1];
   const showFollowUp =
     messages.length > 0 &&
     lastMessage?.role === "assistant" &&
@@ -117,7 +128,7 @@ export function ChatContainer() {
           <div className="pt-2">
             <SuggestedQuestions
               onSelect={handleSend}
-              lastUserMessage={firstUserText}
+              questions={followUpQuestions}
             />
           </div>
         )}

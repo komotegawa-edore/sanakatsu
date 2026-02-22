@@ -1,29 +1,25 @@
 "use client";
 
-import { SUGGESTED_QUESTIONS, FOLLOWUP_QUESTIONS } from "@/lib/ai/chat";
+import { SUGGESTED_QUESTIONS } from "@/lib/ai/chat";
 
 interface SuggestedQuestionsProps {
   onSelect: (question: string) => void;
-  lastUserMessage?: string;
+  questions?: string[];
 }
 
 export function SuggestedQuestions({
   onSelect,
-  lastUserMessage,
+  questions,
 }: SuggestedQuestionsProps) {
-  const isFollowUp = !!lastUserMessage;
-
-  const questions = isFollowUp
-    ? FOLLOWUP_QUESTIONS[lastUserMessage] ?? FOLLOWUP_QUESTIONS.default
-    : SUGGESTED_QUESTIONS;
+  const items = questions ?? SUGGESTED_QUESTIONS;
 
   return (
     <div className="space-y-2">
       <p className="text-xs text-gray-500">
-        {isFollowUp ? "深掘りする:" : "よくある質問:"}
+        {questions ? "深掘りする:" : "よくある質問:"}
       </p>
       <div className="flex flex-wrap gap-2">
-        {questions.map((q) => (
+        {items.map((q) => (
           <button
             key={q}
             onClick={() => onSelect(q)}
