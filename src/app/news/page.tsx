@@ -22,7 +22,7 @@ export default function NewsPage() {
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
             ニュース一覧
           </h1>
-          <p className="text-xs text-gray-500">高市早苗に関する最新ニュース</p>
+          <p className="text-xs text-gray-500">政治の最新ニュースをチェック</p>
         </div>
       </div>
       <div className="mb-4">

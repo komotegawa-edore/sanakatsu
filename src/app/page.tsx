@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const exampleQuestions = [
   { q: "右翼と左翼ってなに？", label: "政治の基本" },
-  { q: "高市早苗ってどんな人？", label: "人物を知る" },
+  { q: "今の総理大臣ってだれ？", label: "人物を知る" },
   { q: "選挙ってどうやって投票するの？", label: "選挙の仕組み" },
   { q: "最近の政治ニュースを教えて", label: "最新ニュース" },
 ];

@@ -3,7 +3,7 @@ import { TopicList } from "@/components/topics/TopicList";
 
 export const metadata = {
   title: "トピック | サナ活",
-  description: "高市早苗に関するニューストピック一覧",
+  description: "政治ニュースをテーマ別に整理",
 };
 
 export default function TopicsPage() {
