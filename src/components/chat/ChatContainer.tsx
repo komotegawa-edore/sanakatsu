@@ -123,7 +123,7 @@ export function ChatContainer() {
         )}
       </div>
 
-      <div className="border-t border-gray-200 bg-white p-4">
+      <div className="sticky bottom-0 border-t border-gray-200 bg-white p-4">
         <ChatInput onSubmit={handleSend} isLoading={isLoading || rateLimited} />
         {rateLimited && (
           <p className="mt-2 text-center text-xs text-gray-400">
