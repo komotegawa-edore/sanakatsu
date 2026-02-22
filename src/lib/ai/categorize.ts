@@ -1,7 +1,11 @@
 import OpenAI from "openai";
 import { DEFAULT_TOPICS } from "../db/topics";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let _openai: OpenAI | null = null;
+function getOpenAI() {
+  if (!_openai) _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return _openai;
+}
 
 const topicDescriptions = DEFAULT_TOPICS.map(
   (t) => `- ${t.slug}: ${t.name} (${t.description})`
@@ -11,7 +15,7 @@ export async function categorizeArticle(
   title: string,
   content: string | null
 ): Promise<string> {
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
       {
