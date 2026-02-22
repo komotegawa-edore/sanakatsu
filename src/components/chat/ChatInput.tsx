@@ -23,6 +23,8 @@ export function ChatInput({ onSubmit, isLoading }: ChatInputProps) {
     if (!input.trim() || isLoading) return;
     onSubmit(input.trim());
     setInput("");
+    // Blur to dismiss keyboard on mobile after sending
+    textareaRef.current?.blur();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -39,9 +41,9 @@ export function ChatInput({ onSubmit, isLoading }: ChatInputProps) {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="高市早苗について質問してください..."
+        placeholder="政治について気になることを聞いてみよう"
         rows={1}
-        className="flex-1 resize-none rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm focus:border-rose-500 focus:ring-1 focus:ring-rose-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+        className="flex-1 resize-none rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm focus:border-rose-500 focus:ring-1 focus:ring-rose-500 focus:outline-none"
         disabled={isLoading}
       />
       <button
