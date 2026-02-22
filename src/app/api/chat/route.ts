@@ -1,11 +1,40 @@
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
+import { headers } from "next/headers";
 import { searchSimilar } from "@/lib/ai/similarity";
 import { buildSystemPrompt } from "@/lib/ai/chat";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
 
+const model = process.env.CHAT_MODEL || "gpt-4o-mini";
+const maxOutputTokens = Number(process.env.CHAT_MAX_TOKENS) || 1024;
+
 export async function POST(req: Request) {
+  // Rate limiting
+  const headersList = await headers();
+  const ip =
+    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    headersList.get("x-real-ip") ??
+    "unknown";
+
+  const { allowed, remaining } = checkRateLimit(ip);
+  if (!allowed) {
+    return new Response(
+      JSON.stringify({
+        error: "rate_limit",
+        message: "本日の利用上限（5回）に達しました。明日またお試しください。",
+      }),
+      {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          "X-RateLimit-Remaining": "0",
+        },
+      }
+    );
+  }
+
   const { messages } = await req.json();
 
   // Get the latest user message for RAG context
@@ -14,17 +43,27 @@ export async function POST(req: Request) {
     .find((m: { role: string }) => m.role === "user");
 
   // Search for relevant articles
-  const context = lastUserMessage
-    ? await searchSimilar(lastUserMessage.content, 5)
-    : [];
+  let context: Awaited<ReturnType<typeof searchSimilar>> = [];
+  try {
+    context = lastUserMessage
+      ? await searchSimilar(lastUserMessage.content, 5)
+      : [];
+  } catch {
+    // DB unavailable — continue without context
+  }
 
   const systemPrompt = buildSystemPrompt(context);
 
   const result = streamText({
-    model: openai("gpt-4o"),
+    model: openai(model),
     system: systemPrompt,
     messages,
+    maxOutputTokens,
   });
 
-  return result.toTextStreamResponse();
+  return result.toTextStreamResponse({
+    headers: {
+      "X-RateLimit-Remaining": String(remaining),
+    },
+  });
 }

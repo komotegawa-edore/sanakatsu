@@ -3,18 +3,31 @@
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
 import Image from "next/image";
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
 import { SuggestedQuestions } from "./SuggestedQuestions";
 
 export function ChatContainer() {
+  const [rateLimited, setRateLimited] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const transport = useMemo(
     () => new TextStreamChatTransport({ api: "/api/chat" }),
     []
   );
 
-  const { messages, sendMessage, status } = useChat({ transport });
+  const { messages, sendMessage, status } = useChat({
+    transport,
+    onError(error) {
+      if (error.message.includes("429") || error.message.includes("rate_limit")) {
+        setRateLimited(true);
+        setErrorMessage("本日の利用上限（5回）に達しました。明日またお試しください。");
+      } else {
+        setErrorMessage("エラーが発生しました。しばらくしてからお試しください。");
+      }
+    },
+  });
 
   const isLoading = status === "submitted" || status === "streaming";
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -26,6 +39,8 @@ export function ChatContainer() {
   }, [messages]);
 
   const handleSend = (content: string) => {
+    if (rateLimited) return;
+    setErrorMessage(null);
     sendMessage({ text: content });
   };
 
@@ -46,7 +61,7 @@ export function ChatContainer() {
                 サナ活 AI チャット
               </h2>
               <p className="mt-2 text-sm text-gray-500">
-                高市早苗に関するニュースについて、AIが出典付きで回答します
+                政治の基本から最新ニュースまで、やさしく回答します
               </p>
             </div>
             <SuggestedQuestions onSelect={handleSend} />
@@ -75,10 +90,22 @@ export function ChatContainer() {
             </div>
           </div>
         )}
+        {errorMessage && (
+          <div className="flex justify-center">
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+              {errorMessage}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="border-t border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
-        <ChatInput onSubmit={handleSend} isLoading={isLoading} />
+        <ChatInput onSubmit={handleSend} isLoading={isLoading || rateLimited} />
+        {rateLimited && (
+          <p className="mt-2 text-center text-xs text-gray-400">
+            本日の利用上限に達しました
+          </p>
+        )}
       </div>
     </div>
   );
