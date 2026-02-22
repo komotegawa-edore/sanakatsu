@@ -35,7 +35,21 @@ export async function POST(req: Request) {
     );
   }
 
-  const { messages } = await req.json();
+  const { messages: rawMessages } = await req.json();
+
+  // Convert parts-based messages to content-based format for streamText
+  const messages = rawMessages.map(
+    (m: { role: string; content?: string; parts?: { type: string; text: string }[] }) => ({
+      role: m.role,
+      content:
+        m.content ??
+        m.parts
+          ?.filter((p) => p.type === "text")
+          .map((p) => p.text)
+          .join("") ??
+        "",
+    })
+  );
 
   // Get the latest user message for RAG context
   const lastUserMessage = [...messages]
